@@ -1,7 +1,10 @@
 import 'dart:io';
-
-
+import 'package:page_transition/page_transition.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import '../app_model.dart';
 
 
 
@@ -40,34 +43,64 @@ SizedBox sizedHeight(double height) => SizedBox(
 SizedBox sizedWidth(double width) => SizedBox(
       width: width,
     );
+bool isLogin() {
+  return token != "";
+}
+pushPageTransition({context, page, type}) {
+  Navigator.push(
+      context,
+      PageTransition(
+          duration: const Duration(milliseconds: 300),
+          reverseDuration:
+              // ignore: prefer_const_constructors
+              Duration(milliseconds: 300),
+          // alignment: Alignment.center,
+          curve: Curves.ease,
+          type: type,
+          child: page));
+}
 
 
-//     FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-// void firebaseCloudMessaging_Listeners() {
+showTopMessage({context, customBar}) {
+  showTopSnackBar(
+    Overlay.of(context),
+    customBar,
+  );
+}
 
-//   if (Platform.isIOS) {
-//     _firebaseMessaging.requestPermission(
-//       alert: true,
-//       announcement: false,
-//       badge: true,
-//       carPlay: false,
-//       criticalAlert: false,
-//       provisional: false,
-//       sound: true,
-//     );
-//   }
+saveToken({tokenAdd}) {
+  const storage = FlutterSecureStorage();
+  storage.write(key: 'token', value: tokenAdd);
+  storage.write(key: 'id', value: currentUser.id);
+  storage.write(key: 'phone', value: currentUser.userName);
+  storage.write(key: 'country', value: currentUser.country);
+  storage.write(key: 'role', value: currentUser.role);
+  storage.write(key: 'gender', value: currentUser.gender);
+  storage.write(key: 'name', value: currentUser.fullName);
+  storage.write(key: 'image', value: currentUser.profileImage.toString());
+}
 
-//   _firebaseMessaging.getToken().then((token){
-//     AppModel.deviceToken=token!;
-//     print(AppModel.deviceToken);
-//   });
+readToken() async {
+  // await getBaseUrl();
+  const storage = FlutterSecureStorage();
+  try {
+    token = (await storage.read(key: "token"))!;
+    currentUser.id = (await storage.read(key: "id"));
+    currentUser.userName = (await storage.read(key: "phone"));
+    currentUser.country = (await storage.read(key: "country"));
+    currentUser.role = (await storage.read(key: "role"));
+    currentUser.fullName = (await storage.read(key: "name"));
+    currentUser.gender = (await storage.read(key: "gender"));
+   
+    currentUser.profileImage = (await storage.read(key: "image"));
+    print("token : ${currentUser.id!}");
+  } catch (e) {}
+}
 
-
-
-
-
-// }
-
+Future saveData(key, value) async {
+  const storage = FlutterSecureStorage();
+  storage.write(key: key, value: value);
+}
 
 Future<void> showMyDialog({context ,title ,body ,founction}) async {
   return showDialog<void>(

@@ -11,3 +11,10 @@ List<CountryModel> countries = [
   CountryModel(1, "الامارات"),
   CountryModel(1, "الكويت")
 ];
+
+List<CountryModel> genders = [
+  CountryModel(1, "معلم"),
+  CountryModel(1, "معلمة"),
+
+];
+
