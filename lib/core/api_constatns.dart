@@ -1,8 +1,8 @@
 
 
 class ApiConstants {
-  //  static const baseUrl ="https://webapi.exittravel.app";
-static const baseUrl = "https://0b05-197-38-59-156.ngrok-free.app";
+ static const baseUrl = "https://mohafez.urapp.site";
+// static const baseUrl = "https://a1d6-154-183-223-32.ngrok-free.app";
   static const baseUrlImages = "$baseUrl/images/";
     
 

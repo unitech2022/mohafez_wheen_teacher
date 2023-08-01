@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:mohafez_elwaheen_teacher/core/data/data.dart';
 import 'package:mohafez_elwaheen_teacher/models/usel_model.dart';
 import 'package:page_transition/page_transition.dart';
@@ -51,7 +53,7 @@ class AuthCubit extends Cubit<AuthState> {
       currentUser.userName = userResponseModel.user!.userName;
       currentUser.id = userResponseModel.user!.id;
       currentUser.country = userResponseModel.user!.country;
-      currentUser.profileImage = userResponseModel.user!.profileImage??"NOT";
+      currentUser.profileImage = userResponseModel.user!.profileImage ?? "NOT";
       currentUser.deviceToken = userResponseModel.user!.deviceToken;
       currentUser.role = userResponseModel.user!.role;
 
@@ -95,8 +97,8 @@ class AuthCubit extends Cubit<AuthState> {
       'FullName': name,
       'gender': gander,
       'Password': 'Abc123@',
-      'Role': 'user',
-      "profileImage":"not",
+      'Role': 'teacher',
+      "profileImage": "not",
       'Country': country,
       'Email': email,
       'code': pass
@@ -110,11 +112,11 @@ class AuthCubit extends Cubit<AuthState> {
     if (response.statusCode == 200) {
       String jsonDataString = await response.stream.bytesToString();
       final jsonData = jsonDecode(jsonDataString);
-  
+
       ResponseRegister responseRegister = ResponseRegister.fromJson(jsonData);
 
       if (responseRegister.status) {
-        await userLogin(context: context, userName: email,pass: pass);
+        await userLogin(context: context, userName: email, pass: pass);
 
         emit(state.copyWith(registerUserState: RequestState.loaded));
       }
@@ -129,9 +131,63 @@ class AuthCubit extends Cubit<AuthState> {
               message: responseRegister.message,
               textStyle: const TextStyle(
                   fontFamily: "font", fontSize: 16, color: Colors.white)));
-      emit(state.copyWith(registerUserState: RequestState.loaded));
+      emit(state.copyWith(registerUserState: RequestState.loaded,image: null));
     } else {
       emit(state.copyWith(registerUserState: RequestState.error));
+    }
+  }
+
+  //update user
+  Future updateProfile({image, fullName, country, gender, context}) async {
+    emit(state.copyWith(getUserState: RequestState.loading));
+
+    var request = http.MultipartRequest(
+        'POST', Uri.parse("${ApiConstants.baseUrl}/update-user"));
+    request.fields.addAll({
+      'gender': gender,
+      'profileImage': image,
+      'fullName': fullName,
+      'UserId': currentUser.id!,
+      'country': country
+    });
+
+    http.StreamedResponse response = await request.send();
+    print("${response.statusCode} ======> updateProfile");
+    if (response.statusCode == 200) {
+      String jsonDataString = await response.stream.bytesToString();
+      final jsonData = jsonDecode(jsonDataString);
+      User user = User.fromJson(jsonData);
+      showTopMessage(
+          context: context,
+          customBar: const CustomSnackBar.success(
+            backgroundColor: Colors.green,
+            message: "تم التعديل بنجاح",
+            textStyle: TextStyle(
+                fontFamily: "font", fontSize: 16, color: Colors.white),
+          ));
+      emit(state.copyWith(
+          getUserState: RequestState.loaded, userResponse: user));
+    } else {
+      emit(state.copyWith(getUserState: RequestState.error));
+    }
+  }
+
+//get user
+  Future getUser() async {
+    emit(state.copyWith(getUserState: RequestState.loading));
+    var request = http.Request('GET',
+        Uri.parse('${ApiConstants.baseUrl}/get-user?UserId=${currentUser.id}'));
+
+    http.StreamedResponse response = await request.send();
+    print("${response.statusCode} ======> getUser");
+    if (response.statusCode == 200) {
+      String jsonDataString = await response.stream.bytesToString();
+      final jsonData = jsonDecode(jsonDataString);
+      User user = User.fromJson(jsonData);
+      emit(state.copyWith(
+          getUserState: RequestState.loaded, userResponse: user));
+    } else {
+      emit(state.copyWith(getUserState: RequestState.error));
     }
   }
 
@@ -140,10 +196,42 @@ class AuthCubit extends Cubit<AuthState> {
   changeDopDawn(int type, CountryModel value) {
     if (type == 1) {
       currentGender = value;
-    }else{
-        currentCountry = value;
+    } else {
+      currentCountry = value;
     }
 
     emit(state.copyWith(selectDropState: RequestState.loaded));
+  }
+
+  uploadImage() async {
+    File _image;
+    final picker = ImagePicker();
+
+    var _pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 50, // <- Reduce Image quality
+        maxHeight: 500, // <- reduce the image size
+        maxWidth: 500);
+
+    if (_pickedFile != null) {
+      _image = File(_pickedFile.path);
+
+      emit(state.copyWith(imageStet: RequestState.loading));
+
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('${ApiConstants.baseUrl}/image/upload/image'));
+      request.files.add(await http.MultipartFile.fromPath('file', _image.path));
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String jsonDataString = await response.stream.bytesToString();
+       
+        emit(state.copyWith(
+            imageStet: RequestState.loaded, image: jsonDataString));
+      } else {
+        emit(state.copyWith(imageStet: RequestState.error));
+      }
+    }
   }
 }

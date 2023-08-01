@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:mohafez_elwaheen_teacher/bloc/auth_cubit/auth_cubit.dart';
+import 'package:mohafez_elwaheen_teacher/bloc/table_cubit/table_cubit.dart';
 import 'package:mohafez_elwaheen_teacher/persintaion/ui/create_account/create_account_screen.dart';
 import 'package:mohafez_elwaheen_teacher/persintaion/ui/login_screen/login_screen.dart';
 import 'package:mohafez_elwaheen_teacher/persintaion/ui/splash_screen/splash_screen.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
      
         BlocProvider<AuthCubit>(
           create: (context) => AuthCubit(),
+        ),
+         BlocProvider<TableCubit>(
+          create: (context) => TableCubit(),
         ),
       ],
      

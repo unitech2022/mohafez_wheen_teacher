@@ -1,12 +1,14 @@
 import 'dart:io';
+import 'package:bottom_picker/bottom_picker.dart';
+import 'package:bottom_picker/resources/arrays.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../app_model.dart';
-
-
 
 pushPage(context, page) {
   Navigator.push(
@@ -46,6 +48,7 @@ SizedBox sizedWidth(double width) => SizedBox(
 bool isLogin() {
   return token != "";
 }
+
 pushPageTransition({context, page, type}) {
   Navigator.push(
       context,
@@ -59,7 +62,6 @@ pushPageTransition({context, page, type}) {
           type: type,
           child: page));
 }
-
 
 showTopMessage({context, customBar}) {
   showTopSnackBar(
@@ -91,7 +93,7 @@ readToken() async {
     currentUser.role = (await storage.read(key: "role"));
     currentUser.fullName = (await storage.read(key: "name"));
     currentUser.gender = (await storage.read(key: "gender"));
-   
+
     currentUser.profileImage = (await storage.read(key: "image"));
     print("token : ${currentUser.id!}");
   } catch (e) {}
@@ -102,21 +104,27 @@ Future saveData(key, value) async {
   storage.write(key: key, value: value);
 }
 
-Future<void> showMyDialog({context ,title ,body ,founction}) async {
+Future<void> showMyDialog({context, title, body, founction}) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
-        title:  Text(title,style: TextStyle(fontSize: 20,color: Colors.black),),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 20, color: Colors.black),
+        ),
         content: SingleChildScrollView(
           child: ListBody(
             children: [
-            
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(body,style: TextStyle(fontSize: 20,color: Colors.black),textAlign: TextAlign.center,),
+                  Text(
+                    body,
+                    style: TextStyle(fontSize: 20, color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ],
@@ -124,15 +132,16 @@ Future<void> showMyDialog({context ,title ,body ,founction}) async {
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text("الغاء",style: TextStyle(fontSize: 14,color: Colors.black)),
+            child: const Text("الغاء",
+                style: TextStyle(fontSize: 14, color: Colors.black)),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
-
-           TextButton(
-            child: const Text("تغيير",style: TextStyle(fontSize: 16,color: Colors.black)),
+          TextButton(
             onPressed: founction,
+            child: const Text("تغيير",
+                style: TextStyle(fontSize: 16, color: Colors.black)),
           ),
         ],
       );
@@ -140,3 +149,31 @@ Future<void> showMyDialog({context ,title ,body ,founction}) async {
   );
 }
 
+pickDateWidget({context, Function(dynamic)? onSubmit}) {
+  BottomPicker.date(
+    dateOrder: DatePickerDateOrder.dmy,
+    title: "اختار التاريخ",
+    titleStyle: const TextStyle(
+        fontWeight: FontWeight.bold, fontSize: 25, color: Colors.blue),
+    onSubmit: onSubmit,
+    minDateTime: DateTime.now().add(const Duration(hours: 24)),
+    bottomPickerTheme: BottomPickerTheme.plumPlate,
+  ).show(context);
+}
+
+pickTimeWidget({context, Function(dynamic)? onSubmit}) {
+  BottomPicker.time(
+          title: "اختار الوقت",
+          titleStyle: const TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 25, color: Colors.blue),
+          onSubmit: onSubmit,
+          // minDateTime: DateTime.now(),
+          bottomPickerTheme: BottomPickerTheme.blue)
+      .show(context);
+}
+
+String formatTime(date) {
+  var outputFormat = DateFormat('hh:mm a');
+  var outputDate = outputFormat.format(date);
+  return outputDate;
+}

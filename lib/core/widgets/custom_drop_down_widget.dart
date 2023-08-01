@@ -96,3 +96,105 @@ class _CustomDropDownWidgetState extends State<CustomDropDownWidget> {
     );
   }
 }
+
+
+
+
+class CustomDropDownWidget2 extends StatefulWidget {
+  final List<String> list;
+  final Function(dynamic) onSelect;
+  final String hint;
+  final bool isTwoIcons;
+
+  final Color iconColor, textColor;
+  final String? currentValue;
+  final bool selectCar;
+
+  const  CustomDropDownWidget2(
+      {super.key, this.selectCar = false,
+      required this.currentValue,
+      required this.textColor,
+      required this.iconColor,
+      this.isTwoIcons = false,
+      required this.list,
+      required this.onSelect,
+      required this.hint});
+
+  @override
+  State<CustomDropDownWidget2> createState() => _CustomDropDownWidget2State();
+}
+
+class _CustomDropDownWidget2State extends State<CustomDropDownWidget2> {
+  String? currentValue;
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2(
+        isExpanded: true,
+        
+        items: widget.list
+            .map((item) => DropdownMenuItem<String>(
+                value: item,
+                child: Text(
+                  item,
+                  style:  const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color:  Colors.black,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                )))
+            .toList(),
+
+
+
+
+        value: currentValue,
+        onChanged: (v){
+          setState(() {
+            currentValue = v!;
+          });
+
+          widget.onSelect(v!);
+
+        },
+        
+        icon: const Icon(
+          Icons.arrow_back_ios_new_sharp,
+          color: Colors.black,
+        ),
+        iconSize: 18,
+        iconEnabledColor: Colors.white,
+        iconDisabledColor: Colors.grey,
+        buttonHeight: 50,
+        buttonWidth: double.infinity,
+        buttonDecoration: const BoxDecoration(
+          color: Colors.transparent,
+        ),
+        itemHeight: 40,
+        itemPadding: const EdgeInsets.only(left: 14, right: 14),
+        dropdownMaxHeight: 200,
+        dropdownPadding: null,
+        dropdownDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: Colors.white,
+        ),
+        
+        dropdownElevation: 8,
+        scrollbarRadius: const Radius.circular(40),
+        scrollbarThickness: 6,
+        scrollbarAlwaysShow: true,
+        offset: const Offset(-20, 0),
+        
+        hint: Text(
+          widget.hint,
+          style:  TextStyle(fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color:  Colors.black.withOpacity(.5),),
+        ),
+      ),
+    );
+  }
+}
+
+

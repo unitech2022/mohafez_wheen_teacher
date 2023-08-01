@@ -10,7 +10,6 @@ import 'package:mohafez_elwaheen_teacher/core/helpers/helper_functions.dart';
 import 'package:mohafez_elwaheen_teacher/core/widgets/loading_widget.dart';
 import 'package:mohafez_elwaheen_teacher/persintaion/ui/home_screen/home_screen.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-
 import '../../../core/enums.dart';
 import '../../../core/styls/colors.dart';
 import '../../../core/widgets/back_button.dart';
@@ -67,7 +66,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         weight: FontWeight.bold,
                         align: TextAlign.center),
                     const Spacer(),
-                    const BackWidget()
+                     BackWidget(color: Colors.black,)
                   ],
                 ),
               ),
@@ -77,37 +76,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 child: SingleChildScrollView(
                     child: Column(
                   children: [
-                    // sizedHeight(15),
-                    // //  upload Image
-                    // Container(
-                    //   height: 100,
-                    //   width: 100,
-                    //   padding: const EdgeInsets.all(2),
-                    //   decoration: const BoxDecoration(
-                    //     color: Color(0xffffffff),
-                    //     borderRadius:
-                    //         BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                    //     boxShadow: [
-                    //       BoxShadow(
-                    //         color: Color(0x0f000000),
-                    //         offset: Offset(0, 10),
-                    //         blurRadius: 20,
-                    //       ),
-                    //     ],
-                    //   ),
-                    //   child: Stack(
-                    //     children: [
-                    //       Image.asset(
-                    //         "assets/images/person.png",
-                    //         height: 100,
-                    //         width: 100,
-                    //       ),
-                    //       const Positioned(
-                    //           right: 2, bottom: 0, child: Icon(Icons.cloud_upload))
-                    //     ],
-                    //   ),
-                    // ),
-
+                 
                     sizedHeight(65),
                     // field name
                     Container(
@@ -309,10 +278,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               name: _controllerFullName.text,
                               email: _controllerEmail.text,
                               gander:
-                                  AuthCubit.get(context).currentGender!.name ==
-                                          "معلم"
-                                      ? "ذكر"
-                                      : "أنثى",
+                                  AuthCubit.get(context).currentGender!.name,
                               country:
                                   AuthCubit.get(context).currentCountry!.name,
                               pass: _controllerPass.text,
